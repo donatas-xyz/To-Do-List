@@ -1,0 +1,67 @@
+﻿@model List<Exercise1.Models.TaskInformation>
+
+@{
+    ViewBag.Title = "To Do List";
+}
+
+<table class="table-tasks">
+    <thead>
+        <tr>
+            <td colspan="3"><span class="heading">To Do List</span></td>
+        </tr>
+    </thead>
+        <tr>
+            @* Add new Task *@
+            @using (Html.BeginForm("AddTask", "List"))
+            {
+                <td colspan="2">
+                    @Html.TextArea("TaskDescription", new { @class = "input-addTaskArea" })
+                </td>
+                <td>
+                    <button type="submit" name="AddTask" value="Add Task" class="btn btn-addTask">Add Task</button>
+                </td>
+            }
+        </tr>
+        @* Check if Model is empty or has been emptied *@
+        @if (Model == null || Model.Count() == 0)
+        {
+            <tr>
+                <td colspan="3">No active Tasks.</td>
+            </tr>
+        }
+        else
+        {
+            /// Iterate through the List of Tasks and list them
+            foreach (var TaskToDo in Model)
+            {
+                <tr>
+                    @* Mark task as Accomplished/Unaccomplished *@
+                    @using (Html.BeginForm("CompleteTask", "List", new { id = @TaskToDo.taskID }))
+                    {
+                        <td>
+                            @Html.CheckBoxFor(model => TaskToDo.taskCompleted, new { onclick = "this.form.submit();" })
+                        </td>
+                    }
+                    <td>
+                        @* Set Task Description's style according to its status *@
+                        @if (@TaskToDo.taskCompleted == true)
+                        {
+                            <span class="accomplished">@Html.DisplayFor(model => TaskToDo.taskDescription)</span>
+                        }
+                        else
+                        {
+                            <span class="unaccomplished">@Html.DisplayFor(model => TaskToDo.taskDescription)</span>
+                        }
+                    </td>
+                    @* Remove the Task from a list *@
+                    @using (Html.BeginForm("RemoveTask", "List", new { id = @TaskToDo.taskID }))
+                    {
+                        <td>
+                            <button type="submit" name="RemoveTask" value="Remove" class="btn btn-removeTask">Remove</button>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+</table>
+
